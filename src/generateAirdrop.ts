@@ -1,6 +1,7 @@
 import { Airdrop, Snapshot } from "./index";
 import path from "path";
 import fs from "fs";
+import { getParsedAirdropObjectForLoopTokens } from "./getLoopAmounts";
 const airdropFilePath = path.resolve(__dirname, "../airdrop.json");
 
 type AirDropObject = {
@@ -42,6 +43,9 @@ snapshot.takeSnapshot(1, pageLimit).then(result => {
       amount: result.snapshot[delegator].toString()
     });
   }
+  
+  // Cap amounts.
+  getParsedAirdropObjectForLoopTokens(airdropObject);
 
   const airdrop = new Airdrop(airdropObject.accounts);
   const proof = airdrop.getMerkleProof(airdropObject.accounts[0]);
