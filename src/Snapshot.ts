@@ -1,4 +1,13 @@
-import * as request from 'request-promise';
+import * as request from "request-promise";
+
+export type DelegationSnapshot = {
+  [delegator: string]: bigint
+};
+
+export type SnapshotResponse = {
+  block: number;
+  snapshot: DelegationSnapshot
+};
 
 class Snapshot {
   URL: string;
@@ -7,16 +16,21 @@ class Snapshot {
     this.URL = URL;
   }
 
-  async takeSnapshot(block: number): Promise<{ [delegator: string]: bigint }> {
-    const delegationSnapshot: { [delegator: string]: bigint } = {};
-    const validators = JSON.parse(
-      await request.get(`${this.URL}/staking/validators?height=${block}`, {
+  /**
+   * Takes a snapshot of the current block given a page number and limit.
+   */
+  async takeSnapshot(pageNumber: number, pageLimit: number): Promise<SnapshotResponse> {
+    const delegationSnapshot: DelegationSnapshot = {};
+    const response = JSON.parse(
+      await request.get(`${this.URL}/staking/validators?page=${pageNumber}&limit=${pageLimit}`, {
         timeout: 10000000
       })
-    )['result'];
+    );
+    const block = response.height;
+    const validators = response.result;
 
     for (let i = 0; i < validators.length; i++) {
-      const operator_addr = validators[i]['operator_address'];
+      const operator_addr = validators[i]["operator_address"];
       const delegators: Array<{
         delegator_address: string;
         validator_address: string;
@@ -27,9 +41,9 @@ class Snapshot {
         };
       }> = JSON.parse(
         await request.get(
-          `${this.URL}/staking/validators/${operator_addr}/delegations?height=${block}`
+          `${this.URL}/staking/validators/${operator_addr}/delegations`
         )
-      )['result'];
+      )["result"];
 
       delegators.forEach((delegation) => {
         if (delegationSnapshot[delegation.delegator_address] === undefined) {
@@ -42,8 +56,11 @@ class Snapshot {
       });
     }
 
-    return delegationSnapshot;
+    return {
+      block,
+      snapshot: delegationSnapshot,
+    };
   }
 }
 
-export = Snapshot;
+export default Snapshot;
