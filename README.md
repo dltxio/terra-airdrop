@@ -4,8 +4,8 @@ Fork of [mirror-airdrop](https://github.com/Mirror-Protocol/mirror-airdrop).
 ## How to use
 
 ### Create distribution list
-Generate a snapshot from the last block with 1000 addresses:  
-`npx ts-node ./src/generateSnapshot.ts --addressCount=1000`  
+Generate a snapshot from the last block:
+`npx ts-node ./src/generateSnapshot.ts <PAGE_LIMIT_NUMBER>`  
 This will save an `airdrop.json` file in the root directory:  
 ```json
 {
