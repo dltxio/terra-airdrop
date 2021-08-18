@@ -1,17 +1,18 @@
 # Airdrop
+Fork of [mirror-airdrop](https://github.com/Mirror-Protocol/mirror-airdrop).
 
 ## How to use
 
-
-### Install package
-```
-$ npm install @mirror-protocol/mirror-airdrop
-```
-
 ### Create distribution list
-`airdrop.json`
+Generate a snapshot from the last block with 1000 addresses:  
+`npx ts-node ./src/generateSnapshot.ts --addressCount=1000`  
+This will save an `airdrop.json` file in the root directory:  
 ```json
 {
+  "merkleRoot": "",
+  "merkleProof": "",
+  "targetAcc": "",
+  "verified": true,
   "accounts": [
     {
       "address": "terra1qfqa2eu9wp272ha93lj4yhcenrc6ymng079nu8",
@@ -30,7 +31,7 @@ $ npm install @mirror-protocol/mirror-airdrop
 }
 ```
 
-### Get proof with user input
+#### Geting proof with user input
 ```javascript
 import { Airdrop } from "@mirror-protocol/mirror-airdrop";
 import { accounts } from "../airdrop.json";
@@ -44,17 +45,20 @@ console.log("Target Acc", accounts[0]);
 console.log("Verified", airdrop.verify(proof, accounts[0]));
 ```
 
-## Take snapshot
+#### Taking snapshot
 ```javascript
 import { Snapshot } from "@mirror-protocol/mirror-airdrop";
 
 const snapshot = new Snapshot("https://lcd.terra.dev");
-snapshot.takeSnapshot(10000).then(delegators => {
+const pageNumber = 1;
+const pageLimit = 10;
+snapshot.takeSnapshot(pageNumber, pageLimit).then(delegators => {
   console.log(delegators)
 });
 ```
 
-## How to build contract
+### Building the airdrop contract
+Built with [CosmWasm](https://github.com/CosmWasm/cosmwasm#production-builds).
 ```
 $ docker run --rm -v "$(pwd)":/code \
   --mount type=volume,source="devcontract_cache_airdrop",target=/code/contracts/airdrop/target \
