@@ -13,6 +13,7 @@ type AirDropObject = {
   },
   verified: boolean,
   addressCount: number,
+  block: number,
   accounts: {
     address: string,
     amount: string
@@ -28,15 +29,16 @@ const snapshot = new Snapshot("https://lcd.terra.dev");
 snapshot.takeSnapshot(1, pageLimit).then(result => {
   console.log(result)
   const delegators = Object.keys(result.snapshot);
-  const airdropObject: AirDropObject = {
+  let airdropObject: AirDropObject = {
     merkleRoot: "",
     merkleProof: [],
     targetAcc: { address: "", amount: "" },
     verified: false,
     addressCount: 0,
+    block: result.block,
     accounts: [],
   };
-  
+
   for (let delegator of delegators) {
     airdropObject.accounts.push({
       address: delegator,
@@ -45,7 +47,7 @@ snapshot.takeSnapshot(1, pageLimit).then(result => {
   }
   
   // Cap amounts.
-  getParsedAirdropObjectForLoopTokens(airdropObject);
+  airdropObject = getParsedAirdropObjectForLoopTokens(airdropObject);
 
   const airdrop = new Airdrop(airdropObject.accounts);
   const proof = airdrop.getMerkleProof(airdropObject.accounts[0]);
