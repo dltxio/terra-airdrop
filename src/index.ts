@@ -1,7 +1,7 @@
 import Airdrop from "./Airdrop";
 import Snapshot from "./Snapshot";
 
-export = {
+export {
   Airdrop,
   Snapshot
 };
