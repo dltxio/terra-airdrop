@@ -6,6 +6,7 @@ Fork of [mirror-airdrop](https://github.com/Mirror-Protocol/mirror-airdrop).
 ### Create distribution list
 Generate a snapshot from the last block:
 `npx ts-node ./src/generateSnapshot.ts <PAGE_LIMIT_NUMBER>`  
+To ensure all delegators are loaded for the block, the integer `9007199254740991` may be used for the page limit.  
 This will save an `airdrop.json` file in the root directory:  
 ```json
 {
