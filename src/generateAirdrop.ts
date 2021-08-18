@@ -18,9 +18,13 @@ type AirDropObject = {
   }[],
 };
 
-console.log(`Generating airdrop for latest block...`);
+const pageLimit = parseInt(process.argv
+  .find(x => !isNaN(parseInt(x)))?.toString() || "1"
+);
+
+console.log(`Generating airdrop for latest block with a page limit of ${pageLimit}...`);
 const snapshot = new Snapshot("https://lcd.terra.dev");
-snapshot.takeSnapshot(1, Number.MAX_SAFE_INTEGER).then(result => {
+snapshot.takeSnapshot(1, pageLimit).then(result => {
   console.log(result)
   const delegators = Object.keys(result.snapshot);
   const airdropObject: AirDropObject = {
